@@ -84,6 +84,11 @@ namespace emscripten {
 
 using namespace emscripten;
 
+static inline bool is_js_function(const emscripten::val& v) {
+    return !v.isNull() && !v.isUndefined() && v.typeof().as<std::string>() == "function";
+}
+
+
 // Helper wrappers for callbacks
 class JSContactListener : public b2ContactListener {
 public:
@@ -97,25 +102,25 @@ public:
     }
 
     void BeginContact(b2Contact* contact) override {
-        if (!jsObject.isNull() && !jsObject.isUndefined() && jsObject["BeginContact"].isFunction()) {
+        if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["BeginContact"])) {
             jsObject.call<void>("BeginContact", contact);
         }
     }
 
     void EndContact(b2Contact* contact) override {
-        if (!jsObject.isNull() && !jsObject.isUndefined() && jsObject["EndContact"].isFunction()) {
+        if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["EndContact"])) {
             jsObject.call<void>("EndContact", contact);
         }
     }
 
     void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override {
-        if (!jsObject.isNull() && !jsObject.isUndefined() && jsObject["PreSolve"].isFunction()) {
+        if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PreSolve"])) {
             jsObject.call<void>("PreSolve", contact, oldManifold);
         }
     }
 
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override {
-        if (!jsObject.isNull() && !jsObject.isUndefined() && jsObject["PostSolve"].isFunction()) {
+        if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PostSolve"])) {
             jsObject.call<void>("PostSolve", contact, impulse);
         }
     }
@@ -128,7 +133,7 @@ public:
     JSQueryCallback(emscripten::val cb) : jsCallback(cb) {}
 
     bool ReportFixture(b2Fixture* fixture) override {
-        if (jsCallback.isFunction()) {
+        if (is_js_function(jsCallback)) {
             return jsCallback.call<bool>("call", emscripten::val::null(), fixture);
         }
         return false;
@@ -142,7 +147,7 @@ public:
     JSRayCastCallback(emscripten::val cb) : jsCallback(cb) {}
 
     float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
-        if (jsCallback.isFunction()) {
+        if (is_js_function(jsCallback)) {
             return jsCallback.call<float>("call", emscripten::val::null(), fixture, point, normal, fraction);
         }
         return fraction;
@@ -159,7 +164,7 @@ public:
     void SetHandler(emscripten::val obj) { jsObj = obj; }
 
     void DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawPolygon"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawPolygon"])) {
             emscripten::val arr = emscripten::val::array();
             for (int32 i = 0; i < vertexCount; ++i) {
                 arr.set(i, vertices[i]);
@@ -169,7 +174,7 @@ public:
     }
 
     void DrawSolidPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawSolidPolygon"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawSolidPolygon"])) {
             emscripten::val arr = emscripten::val::array();
             for (int32 i = 0; i < vertexCount; ++i) {
                 arr.set(i, vertices[i]);
@@ -179,31 +184,31 @@ public:
     }
 
     void DrawCircle(const b2Vec2& center, float radius, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawCircle"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawCircle"])) {
             jsObj.call<void>("DrawCircle", center, radius, color);
         }
     }
 
     void DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2& axis, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawSolidCircle"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawSolidCircle"])) {
             jsObj.call<void>("DrawSolidCircle", center, radius, axis, color);
         }
     }
 
     void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawSegment"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawSegment"])) {
             jsObj.call<void>("DrawSegment", p1, p2, color);
         }
     }
 
     void DrawTransform(const b2Transform& xf) override {
-        if (!jsObj.isNull() && jsObj["DrawTransform"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawTransform"])) {
             jsObj.call<void>("DrawTransform", xf);
         }
     }
 
     void DrawPoint(const b2Vec2& p, float size, const b2Color& color) override {
-        if (!jsObj.isNull() && jsObj["DrawPoint"].isFunction()) {
+        if (!jsObj.isNull() && !jsObj.isUndefined() && is_js_function(jsObj["DrawPoint"])) {
             jsObj.call<void>("DrawPoint", p, size, color);
         }
     }
