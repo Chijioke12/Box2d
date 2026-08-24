@@ -7,20 +7,18 @@
 // Custom destructor traits for types with private or protected destructors
 // so Emscripten / Embind does not try to generate a default 'delete ptr;'
 namespace emscripten {
-    namespace internal {
-        template <> inline void raw_destructor<b2Body>(b2Body*) {}
-        template <> inline void raw_destructor<b2Fixture>(b2Fixture*) {}
-        template <> inline void raw_destructor<b2Joint>(b2Joint*) {}
-        template <> inline void raw_destructor<b2RevoluteJoint>(b2RevoluteJoint*) {}
-        template <> inline void raw_destructor<b2DistanceJoint>(b2DistanceJoint*) {}
-        template <> inline void raw_destructor<b2PrismaticJoint>(b2PrismaticJoint*) {}
-        template <> inline void raw_destructor<b2MouseJoint>(b2MouseJoint*) {}
-        template <> inline void raw_destructor<b2WeldJoint>(b2WeldJoint*) {}
-        template <> inline void raw_destructor<b2WheelJoint>(b2WheelJoint*) {}
-        template <> inline void raw_destructor<b2MotorJoint>(b2MotorJoint*) {}
-        template <> inline void raw_destructor<b2FrictionJoint>(b2FrictionJoint*) {}
-        template <> inline void raw_destructor<b2Contact>(b2Contact*) {}
-    }
+    template <> inline void raw_destructor<b2Body>(b2Body*) {}
+    template <> inline void raw_destructor<b2Fixture>(b2Fixture*) {}
+    template <> inline void raw_destructor<b2Joint>(b2Joint*) {}
+    template <> inline void raw_destructor<b2RevoluteJoint>(b2RevoluteJoint*) {}
+    template <> inline void raw_destructor<b2DistanceJoint>(b2DistanceJoint*) {}
+    template <> inline void raw_destructor<b2PrismaticJoint>(b2PrismaticJoint*) {}
+    template <> inline void raw_destructor<b2MouseJoint>(b2MouseJoint*) {}
+    template <> inline void raw_destructor<b2WeldJoint>(b2WeldJoint*) {}
+    template <> inline void raw_destructor<b2WheelJoint>(b2WheelJoint*) {}
+    template <> inline void raw_destructor<b2MotorJoint>(b2MotorJoint*) {}
+    template <> inline void raw_destructor<b2FrictionJoint>(b2FrictionJoint*) {}
+    template <> inline void raw_destructor<b2Contact>(b2Contact*) {}
 }
 
 using namespace emscripten;
