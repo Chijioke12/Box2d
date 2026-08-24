@@ -56,13 +56,13 @@ public:
 
     void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PreSolve"])) {
-            jsObject.call<void>("PreSolve", contact, oldManifold);
+            jsObject.call<void>("PreSolve", contact, const_cast<b2Manifold*>(oldManifold));
         }
     }
 
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PostSolve"])) {
-            jsObject.call<void>("PostSolve", contact, impulse);
+            jsObject.call<void>("PostSolve", contact, const_cast<b2ContactImpulse*>(impulse));
         }
     }
 };
