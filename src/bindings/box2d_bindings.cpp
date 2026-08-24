@@ -4,6 +4,84 @@
 #include <emscripten/val.h>
 #include <box2d/box2d.h>
 
+// Custom destructor traits for types with private or protected destructors
+// so Emscripten / Embind does not try to generate a default 'delete ptr;'
+namespace emscripten {
+    namespace internal {
+        template <>
+        struct raw_destructor<b2Body> {
+            static void my_destructor(b2Body*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2Fixture> {
+            static void my_destructor(b2Fixture*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2Joint> {
+            static void my_destructor(b2Joint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2RevoluteJoint> {
+            static void my_destructor(b2RevoluteJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2DistanceJoint> {
+            static void my_destructor(b2DistanceJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2PrismaticJoint> {
+            static void my_destructor(b2PrismaticJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2MouseJoint> {
+            static void my_destructor(b2MouseJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2WeldJoint> {
+            static void my_destructor(b2WeldJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2WheelJoint> {
+            static void my_destructor(b2WheelJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2MotorJoint> {
+            static void my_destructor(b2MotorJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2FrictionJoint> {
+            static void my_destructor(b2FrictionJoint*) {}
+            static constexpr auto value = &my_destructor;
+        };
+
+        template <>
+        struct raw_destructor<b2Contact> {
+            static void my_destructor(b2Contact*) {}
+            static constexpr auto value = &my_destructor;
+        };
+    }
+}
+
 using namespace emscripten;
 
 // Helper wrappers for callbacks
