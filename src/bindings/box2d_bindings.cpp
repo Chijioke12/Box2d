@@ -25,6 +25,42 @@ namespace emscripten {
 
 using namespace emscripten;
 
+#define ALLOW_RAW_POINTER(T) \
+    namespace emscripten { \
+    namespace internal { \
+        template<> struct TypeID<T*> { \
+            static constexpr TYPEID get() { return TypeID<AllowedRawPointer<T>>::get(); } \
+        }; \
+        template<> struct TypeID<const T*> { \
+            static constexpr TYPEID get() { return TypeID<AllowedRawPointer<const T>>::get(); } \
+        }; \
+        template<> struct BindingType<T*> { \
+            typedef T* WireType; \
+            static WireType toWireType(T* v) { return v; } \
+            template<typename Policy> static WireType toWireType(T* v, Policy) { return v; } \
+            static T* fromWireType(WireType v) { return v; } \
+        }; \
+        template<> struct BindingType<const T*> { \
+            typedef const T* WireType; \
+            static WireType toWireType(const T* v) { return v; } \
+            template<typename Policy> static WireType toWireType(const T* v, Policy) { return v; } \
+            static const T* fromWireType(WireType v) { return v; } \
+        }; \
+    } \
+    }
+
+ALLOW_RAW_POINTER(b2Body)
+ALLOW_RAW_POINTER(b2Fixture)
+ALLOW_RAW_POINTER(b2Joint)
+ALLOW_RAW_POINTER(b2Contact)
+ALLOW_RAW_POINTER(b2Manifold)
+ALLOW_RAW_POINTER(b2ContactImpulse)
+ALLOW_RAW_POINTER(b2Shape)
+ALLOW_RAW_POINTER(b2World)
+ALLOW_RAW_POINTER(b2Draw)
+ALLOW_RAW_POINTER(b2ContactListener)
+
+
 static inline bool is_js_function(const emscripten::val& v) {
     return !v.isNull() && !v.isUndefined() && v.typeof().as<std::string>() == "function";
 }
@@ -44,25 +80,25 @@ public:
 
     void BeginContact(b2Contact* contact) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["BeginContact"])) {
-            jsObject.call<void>("BeginContact", emscripten::val(contact, emscripten::allow_raw_pointers()));
+            jsObject.call<void>("BeginContact", contact);
         }
     }
 
     void EndContact(b2Contact* contact) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["EndContact"])) {
-            jsObject.call<void>("EndContact", emscripten::val(contact, emscripten::allow_raw_pointers()));
+            jsObject.call<void>("EndContact", contact);
         }
     }
 
     void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PreSolve"])) {
-            jsObject.call<void>("PreSolve", emscripten::val(contact, emscripten::allow_raw_pointers()), emscripten::val(const_cast<b2Manifold*>(oldManifold), emscripten::allow_raw_pointers()));
+            jsObject.call<void>("PreSolve", contact, const_cast<b2Manifold*>(oldManifold));
         }
     }
 
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PostSolve"])) {
-            jsObject.call<void>("PostSolve", emscripten::val(contact, emscripten::allow_raw_pointers()), emscripten::val(const_cast<b2ContactImpulse*>(impulse), emscripten::allow_raw_pointers()));
+            jsObject.call<void>("PostSolve", contact, const_cast<b2ContactImpulse*>(impulse));
         }
     }
 };
@@ -75,7 +111,7 @@ public:
 
     bool ReportFixture(b2Fixture* fixture) override {
         if (is_js_function(jsCallback)) {
-            return jsCallback.call<bool>("call", emscripten::val::null(), emscripten::val(fixture, emscripten::allow_raw_pointers()));
+            return jsCallback.call<bool>("call", emscripten::val::null(), fixture);
         }
         return false;
     }
@@ -89,7 +125,7 @@ public:
 
     float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
         if (is_js_function(jsCallback)) {
-            return jsCallback.call<float>("call", emscripten::val::null(), emscripten::val(fixture, emscripten::allow_raw_pointers()), point, normal, fraction);
+            return jsCallback.call<float>("call", emscripten::val::null(), fixture, point, normal, fraction);
         }
         return fraction;
     }
@@ -165,31 +201,13 @@ static void b2World_RayCast(b2World& world, emscripten::val jsCb, const b2Vec2& 
     world.RayCast(&cb, p1, p2);
 }
 
-static emscripten::val b2FixtureDef_get_shape(const b2FixtureDef& def) {
-    if (def.shape) return emscripten::val(def.shape, emscripten::allow_raw_pointers());
-    return emscripten::val::null();
-}
-static void b2FixtureDef_set_shape(b2FixtureDef& def, emscripten::val shape) {
-    if (shape.isNull() || shape.isUndefined()) def.shape = nullptr;
-    else def.shape = shape.as<b2Shape*>(emscripten::allow_raw_pointers());
-}
 
-static emscripten::val b2JointDef_get_bodyA(const b2JointDef& def) {
-    if (def.bodyA) return emscripten::val(def.bodyA, emscripten::allow_raw_pointers());
-    return emscripten::val::null();
-}
-static void b2JointDef_set_bodyA(b2JointDef& def, emscripten::val body) {
-    if (body.isNull() || body.isUndefined()) def.bodyA = nullptr;
-    else def.bodyA = body.as<b2Body*>(emscripten::allow_raw_pointers());
-}
-static emscripten::val b2JointDef_get_bodyB(const b2JointDef& def) {
-    if (def.bodyB) return emscripten::val(def.bodyB, emscripten::allow_raw_pointers());
-    return emscripten::val::null();
-}
-static void b2JointDef_set_bodyB(b2JointDef& def, emscripten::val body) {
-    if (body.isNull() || body.isUndefined()) def.bodyB = nullptr;
-    else def.bodyB = body.as<b2Body*>(emscripten::allow_raw_pointers());
-}
+
+
+
+
+
+
 
 EMSCRIPTEN_BINDINGS(box2d) {
 
@@ -365,7 +383,7 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2FixtureDef>("b2FixtureDef")
         .constructor<>()
-        .property("shape", &b2FixtureDef_get_shape, &b2FixtureDef_set_shape)
+        .property("shape", &b2FixtureDef::shape)
         .property("friction", &b2FixtureDef::friction)
         .property("restitution", &b2FixtureDef::restitution)
         .property("restitutionThreshold", &b2FixtureDef::restitutionThreshold)
@@ -459,8 +477,8 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2JointDef>("b2JointDef")
         .property("type", &b2JointDef::type)
-        .property("bodyA", &b2JointDef_get_bodyA, &b2JointDef_set_bodyA)
-        .property("bodyB", &b2JointDef_get_bodyB, &b2JointDef_set_bodyB)
+        .property("bodyA", &b2JointDef::bodyA)
+        .property("bodyB", &b2JointDef::bodyB)
         .property("collideConnected", &b2JointDef::collideConnected);
 
     class_<b2Joint>("b2Joint")
