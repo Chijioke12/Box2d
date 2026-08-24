@@ -131,6 +131,26 @@ public:
     }
 };
 
+static const b2Shape* b2FixtureDef_get_shape(const b2FixtureDef& def) {
+    return def.shape;
+}
+static void b2FixtureDef_set_shape(b2FixtureDef& def, const b2Shape* shape) {
+    def.shape = shape;
+}
+
+static b2Body* b2JointDef_get_bodyA(const b2JointDef& def) {
+    return def.bodyA;
+}
+static void b2JointDef_set_bodyA(b2JointDef& def, b2Body* body) {
+    def.bodyA = body;
+}
+static b2Body* b2JointDef_get_bodyB(const b2JointDef& def) {
+    return def.bodyB;
+}
+static void b2JointDef_set_bodyB(b2JointDef& def, b2Body* body) {
+    def.bodyB = body;
+}
+
 EMSCRIPTEN_BINDINGS(box2d) {
 
     // ----------------------------------------------------
@@ -279,7 +299,7 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2FixtureDef>("b2FixtureDef")
         .constructor<>()
-        .property("shape", &b2FixtureDef::shape, allow_raw_pointers())
+        .property("shape", &b2FixtureDef_get_shape, &b2FixtureDef_set_shape, allow_raw_pointers())
         .property("friction", &b2FixtureDef::friction)
         .property("restitution", &b2FixtureDef::restitution)
         .property("restitutionThreshold", &b2FixtureDef::restitutionThreshold)
@@ -373,8 +393,8 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2JointDef>("b2JointDef")
         .property("type", &b2JointDef::type)
-        .property("bodyA", &b2JointDef::bodyA, allow_raw_pointers())
-        .property("bodyB", &b2JointDef::bodyB, allow_raw_pointers())
+        .property("bodyA", &b2JointDef_get_bodyA, &b2JointDef_set_bodyA, allow_raw_pointers())
+        .property("bodyB", &b2JointDef_get_bodyB, &b2JointDef_set_bodyB, allow_raw_pointers())
         .property("collideConnected", &b2JointDef::collideConnected);
 
     class_<b2Joint>("b2Joint")
