@@ -1,0 +1,6 @@
+{
+  "name": "Greetings",
+  "description": "A welcoming and elegant greeting application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

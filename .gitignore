@@ -1,0 +1,15 @@
+build/
+build-asmjs/
+dist/
+bin/
+out/
+.vs/
+.vscode/
+node_modules/
+*.log
+.DS_Store
+imgui.ini
+settings.ini
+CMakeSettings.json
+.env
+
