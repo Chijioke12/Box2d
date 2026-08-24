@@ -62,7 +62,7 @@ ALLOW_RAW_POINTER(b2ContactListener)
 
 
 static inline bool is_js_function(const emscripten::val& v) {
-    return !v.isNull() && !v.isUndefined() && v.typeof().as<std::string>() == "function";
+    return !v.isNull() && !v.isUndefined() && v.typeOf().as<std::string>() == "function";
 }
 
 
