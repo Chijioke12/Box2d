@@ -23,8 +23,7 @@ emcmake cmake .. \
     -DBOX2D_BUILD_UNIT_TESTS=OFF \
     -DBOX2D_BUILD_TESTBED=OFF \
     -DBOX2D_BUILD_DOCS=OFF \
-    -DCMAKE_CXX_FLAGS="-O3 -s WASM=0 -s LEGACY_VM_SUPPORT=1" \
-    -DCMAKE_STATIC_LINKER_FLAGS="-s WASM=0"
+    -DCMAKE_CXX_FLAGS="-O3"
 
 # Build all libraries
 cmake --build . --config Release

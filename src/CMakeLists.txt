@@ -119,12 +119,19 @@ if (EMSCRIPTEN)
     SUFFIX ".js"
   )
   if (NOT BOX2D_BUILD_WASM)
-    set_target_properties(box2d_js PROPERTIES
-      LINK_FLAGS "-s WASM=0 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORT_NAME='Box2D' -s LEGACY_VM_SUPPORT=1"
+    target_link_options(box2d_js PRIVATE
+      "-sWASM=0"
+      "-sALLOW_MEMORY_GROWTH=1"
+      "-sMODULARIZE=1"
+      "-sEXPORT_NAME=Box2D"
+      "-sLEGACY_VM_SUPPORT=1"
     )
   else()
-    set_target_properties(box2d_js PROPERTIES
-      LINK_FLAGS "-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORT_NAME='Box2D'"
+    target_link_options(box2d_js PRIVATE
+      "-sWASM=1"
+      "-sALLOW_MEMORY_GROWTH=1"
+      "-sMODULARIZE=1"
+      "-sEXPORT_NAME=Box2D"
     )
   endif()
 endif()
