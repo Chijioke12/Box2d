@@ -165,24 +165,30 @@ static void b2World_RayCast(b2World& world, emscripten::val jsCb, const b2Vec2& 
     world.RayCast(&cb, p1, p2);
 }
 
-static const b2Shape* b2FixtureDef_get_shape(const b2FixtureDef& def) {
-    return def.shape;
+static emscripten::val b2FixtureDef_get_shape(const b2FixtureDef& def) {
+    if (def.shape) return emscripten::val(def.shape, emscripten::allow_raw_pointers());
+    return emscripten::val::null();
 }
-static void b2FixtureDef_set_shape(b2FixtureDef& def, const b2Shape* shape) {
-    def.shape = shape;
+static void b2FixtureDef_set_shape(b2FixtureDef& def, emscripten::val shape) {
+    if (shape.isNull() || shape.isUndefined()) def.shape = nullptr;
+    else def.shape = shape.as<b2Shape*>(emscripten::allow_raw_pointers());
 }
 
-static b2Body* b2JointDef_get_bodyA(const b2JointDef& def) {
-    return def.bodyA;
+static emscripten::val b2JointDef_get_bodyA(const b2JointDef& def) {
+    if (def.bodyA) return emscripten::val(def.bodyA, emscripten::allow_raw_pointers());
+    return emscripten::val::null();
 }
-static void b2JointDef_set_bodyA(b2JointDef& def, b2Body* body) {
-    def.bodyA = body;
+static void b2JointDef_set_bodyA(b2JointDef& def, emscripten::val body) {
+    if (body.isNull() || body.isUndefined()) def.bodyA = nullptr;
+    else def.bodyA = body.as<b2Body*>(emscripten::allow_raw_pointers());
 }
-static b2Body* b2JointDef_get_bodyB(const b2JointDef& def) {
-    return def.bodyB;
+static emscripten::val b2JointDef_get_bodyB(const b2JointDef& def) {
+    if (def.bodyB) return emscripten::val(def.bodyB, emscripten::allow_raw_pointers());
+    return emscripten::val::null();
 }
-static void b2JointDef_set_bodyB(b2JointDef& def, b2Body* body) {
-    def.bodyB = body;
+static void b2JointDef_set_bodyB(b2JointDef& def, emscripten::val body) {
+    if (body.isNull() || body.isUndefined()) def.bodyB = nullptr;
+    else def.bodyB = body.as<b2Body*>(emscripten::allow_raw_pointers());
 }
 
 EMSCRIPTEN_BINDINGS(box2d) {
@@ -359,7 +365,7 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2FixtureDef>("b2FixtureDef")
         .constructor<>()
-        .property("shape", &b2FixtureDef_get_shape, &b2FixtureDef_set_shape, allow_raw_pointers())
+        .property("shape", &b2FixtureDef_get_shape, &b2FixtureDef_set_shape)
         .property("friction", &b2FixtureDef::friction)
         .property("restitution", &b2FixtureDef::restitution)
         .property("restitutionThreshold", &b2FixtureDef::restitutionThreshold)
@@ -453,8 +459,8 @@ EMSCRIPTEN_BINDINGS(box2d) {
     // ----------------------------------------------------
     class_<b2JointDef>("b2JointDef")
         .property("type", &b2JointDef::type)
-        .property("bodyA", &b2JointDef_get_bodyA, &b2JointDef_set_bodyA, allow_raw_pointers())
-        .property("bodyB", &b2JointDef_get_bodyB, &b2JointDef_set_bodyB, allow_raw_pointers())
+        .property("bodyA", &b2JointDef_get_bodyA, &b2JointDef_set_bodyA)
+        .property("bodyB", &b2JointDef_get_bodyB, &b2JointDef_set_bodyB)
         .property("collideConnected", &b2JointDef::collideConnected);
 
     class_<b2Joint>("b2Joint")
