@@ -44,25 +44,25 @@ public:
 
     void BeginContact(b2Contact* contact) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["BeginContact"])) {
-            jsObject.call<void>("BeginContact", contact);
+            jsObject.call<void>("BeginContact", emscripten::val(contact, emscripten::allow_raw_pointers()));
         }
     }
 
     void EndContact(b2Contact* contact) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["EndContact"])) {
-            jsObject.call<void>("EndContact", contact);
+            jsObject.call<void>("EndContact", emscripten::val(contact, emscripten::allow_raw_pointers()));
         }
     }
 
     void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PreSolve"])) {
-            jsObject.call<void>("PreSolve", contact, const_cast<b2Manifold*>(oldManifold));
+            jsObject.call<void>("PreSolve", emscripten::val(contact, emscripten::allow_raw_pointers()), emscripten::val(const_cast<b2Manifold*>(oldManifold), emscripten::allow_raw_pointers()));
         }
     }
 
     void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) override {
         if (!jsObject.isNull() && !jsObject.isUndefined() && is_js_function(jsObject["PostSolve"])) {
-            jsObject.call<void>("PostSolve", contact, const_cast<b2ContactImpulse*>(impulse));
+            jsObject.call<void>("PostSolve", emscripten::val(contact, emscripten::allow_raw_pointers()), emscripten::val(const_cast<b2ContactImpulse*>(impulse), emscripten::allow_raw_pointers()));
         }
     }
 };
@@ -75,7 +75,7 @@ public:
 
     bool ReportFixture(b2Fixture* fixture) override {
         if (is_js_function(jsCallback)) {
-            return jsCallback.call<bool>("call", emscripten::val::null(), fixture);
+            return jsCallback.call<bool>("call", emscripten::val::null(), emscripten::val(fixture, emscripten::allow_raw_pointers()));
         }
         return false;
     }
@@ -89,7 +89,7 @@ public:
 
     float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override {
         if (is_js_function(jsCallback)) {
-            return jsCallback.call<float>("call", emscripten::val::null(), fixture, point, normal, fraction);
+            return jsCallback.call<float>("call", emscripten::val::null(), emscripten::val(fixture, emscripten::allow_raw_pointers()), point, normal, fraction);
         }
         return fraction;
     }
