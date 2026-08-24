@@ -131,6 +131,16 @@ public:
     }
 };
 
+static void b2World_QueryAABB(b2World& world, emscripten::val jsCb, const b2AABB& aabb) {
+    JSQueryCallback cb(jsCb);
+    world.QueryAABB(&cb, aabb);
+}
+
+static void b2World_RayCast(b2World& world, emscripten::val jsCb, const b2Vec2& p1, const b2Vec2& p2) {
+    JSRayCastCallback cb(jsCb);
+    world.RayCast(&cb, p1, p2);
+}
+
 static const b2Shape* b2FixtureDef_get_shape(const b2FixtureDef& def) {
     return def.shape;
 }
@@ -207,7 +217,33 @@ EMSCRIPTEN_BINDINGS(box2d) {
         .function("GetPerimeter", &b2AABB::GetPerimeter)
         .function("Combine", select_overload<void(const b2AABB&, const b2AABB&)>(&b2AABB::Combine))
         .function("Contains", &b2AABB::Contains)
-        .function("RayCast", &b2AABB::RayCast);
+        .function("RayCast", &b2AABB::RayCast, allow_raw_pointers());
+
+    class_<b2RayCastInput>("b2RayCastInput")
+        .constructor<>()
+        .property("p1", &b2RayCastInput::p1)
+        .property("p2", &b2RayCastInput::p2)
+        .property("maxFraction", &b2RayCastInput::maxFraction);
+
+    class_<b2RayCastOutput>("b2RayCastOutput")
+        .constructor<>()
+        .property("normal", &b2RayCastOutput::normal)
+        .property("fraction", &b2RayCastOutput::fraction);
+
+    class_<b2WorldManifold>("b2WorldManifold")
+        .constructor<>()
+        .property("normal", &b2WorldManifold::normal)
+        .function("Initialize", &b2WorldManifold::Initialize, allow_raw_pointers());
+
+    class_<b2Manifold>("b2Manifold")
+        .constructor<>()
+        .property("localNormal", &b2Manifold::localNormal)
+        .property("localPoint", &b2Manifold::localPoint)
+        .property("pointCount", &b2Manifold::pointCount);
+
+    class_<b2ContactImpulse>("b2ContactImpulse")
+        .constructor<>()
+        .property("count", &b2ContactImpulse::count);
 
     class_<b2Color>("b2Color")
         .constructor<>()
@@ -609,7 +645,9 @@ EMSCRIPTEN_BINDINGS(box2d) {
         .function("GetSubStepping", &b2World::GetSubStepping)
         .function("SetContactListener", select_overload<void(b2ContactListener*)>(&b2World::SetContactListener), allow_raw_pointers())
         .function("SetDebugDraw", select_overload<void(b2Draw*)>(&b2World::SetDebugDraw), allow_raw_pointers())
-        .function("DebugDraw", &b2World::DebugDraw);
+        .function("DebugDraw", &b2World::DebugDraw)
+        .function("QueryAABB", &b2World_QueryAABB)
+        .function("RayCast", &b2World_RayCast);
 }
 
 #endif
