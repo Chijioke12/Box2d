@@ -106,7 +106,7 @@ target_include_directories(box2d
 )
 
 if (EMSCRIPTEN)
-  add_executable(box2d_js ${BOX2D_SOURCE_FILES})
+  add_executable(box2d_js ${BOX2D_SOURCE_FILES} bindings/box2d_bindings.cpp)
   target_include_directories(box2d_js
     PUBLIC
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
@@ -114,12 +114,16 @@ if (EMSCRIPTEN)
     PRIVATE
       ${CMAKE_CURRENT_SOURCE_DIR}
   )
+  target_compile_options(box2d_js PRIVATE "--bind")
   set_target_properties(box2d_js PROPERTIES
     OUTPUT_NAME "box2d"
     SUFFIX ".js"
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
   )
   if (NOT BOX2D_BUILD_WASM)
     target_link_options(box2d_js PRIVATE
+      "--bind"
       "-sWASM=0"
       "-sALLOW_MEMORY_GROWTH=1"
       "-sMODULARIZE=1"
@@ -129,6 +133,7 @@ if (EMSCRIPTEN)
     )
   else()
     target_link_options(box2d_js PRIVATE
+      "--bind"
       "-sWASM=1"
       "-sALLOW_MEMORY_GROWTH=1"
       "-sMODULARIZE=1"
