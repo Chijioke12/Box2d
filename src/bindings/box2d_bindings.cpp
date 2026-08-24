@@ -650,12 +650,16 @@ EMSCRIPTEN_BINDINGS(box2d) {
         .function("GetRestitution", &b2Contact::GetRestitution)
         .function("ResetRestitution", &b2Contact::ResetRestitution);
 
-    class_<JSContactListener>("JSContactListener")
+    class_<b2ContactListener>("b2ContactListener");
+
+    class_<JSContactListener, base<b2ContactListener>>("JSContactListener")
         .constructor<>()
         .constructor<emscripten::val>()
         .function("SetHandler", &JSContactListener::SetHandler);
 
-    class_<JSDraw>("JSDraw")
+    class_<b2Draw>("b2Draw");
+
+    class_<JSDraw, base<b2Draw>>("JSDraw")
         .constructor<>()
         .constructor<emscripten::val>()
         .function("SetHandler", &JSDraw::SetHandler)
