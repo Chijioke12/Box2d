@@ -42,6 +42,15 @@ jobs:
       # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
       run: ./bin/unit_test
       
+    - name: Upload Linux Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: box2d-linux
+        path: |
+          ${{github.workspace}}/build/bin
+          ${{github.workspace}}/build/src/libbox2d.a
+        if-no-files-found: ignore
+
   build-macos:
     name: macos
     runs-on: macos-latest
@@ -58,7 +67,16 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ./bin/unit_test
-      
+
+    - name: Upload macOS Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: box2d-macos
+        path: |
+          ${{github.workspace}}/build/bin
+          ${{github.workspace}}/build/src/libbox2d.a
+        if-no-files-found: ignore
+
   build-windows:
     name: windows
     runs-on: windows-latest
@@ -75,6 +93,15 @@ jobs:
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ./bin/${{env.BUILD_TYPE}}/unit_test
+
+    - name: Upload Windows Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: box2d-windows
+        path: |
+          ${{github.workspace}}/build/bin
+          ${{github.workspace}}/build/src/${{env.BUILD_TYPE}}/box2d.lib
+        if-no-files-found: ignore
 
   build-asmjs:
     name: asmjs (emscripten)
@@ -103,5 +130,15 @@ jobs:
 
     - name: Build asm.js
       run: cmake --build ${{github.workspace}}/build-asmjs --config ${{env.BUILD_TYPE}}
+
+    - name: Upload asm.js Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: box2d-asmjs
+        path: |
+          ${{github.workspace}}/build-asmjs/bin
+          ${{github.workspace}}/build-asmjs/src/libbox2d.a
+          ${{github.workspace}}/build-asmjs/src/*.js
+        if-no-files-found: warn
 
       
