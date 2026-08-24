@@ -125,6 +125,7 @@ if (EMSCRIPTEN)
       "-sMODULARIZE=1"
       "-sEXPORT_NAME=Box2D"
       "-sLEGACY_VM_SUPPORT=1"
+      "-sMEM_INIT_METHOD=0"
     )
   else()
     target_link_options(box2d_js PRIVATE
