@@ -8,77 +8,18 @@
 // so Emscripten / Embind does not try to generate a default 'delete ptr;'
 namespace emscripten {
     namespace internal {
-        template <>
-        struct raw_destructor<b2Body> {
-            static void my_destructor(b2Body*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2Fixture> {
-            static void my_destructor(b2Fixture*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2Joint> {
-            static void my_destructor(b2Joint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2RevoluteJoint> {
-            static void my_destructor(b2RevoluteJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2DistanceJoint> {
-            static void my_destructor(b2DistanceJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2PrismaticJoint> {
-            static void my_destructor(b2PrismaticJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2MouseJoint> {
-            static void my_destructor(b2MouseJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2WeldJoint> {
-            static void my_destructor(b2WeldJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2WheelJoint> {
-            static void my_destructor(b2WheelJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2MotorJoint> {
-            static void my_destructor(b2MotorJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2FrictionJoint> {
-            static void my_destructor(b2FrictionJoint*) {}
-            static constexpr auto value = &my_destructor;
-        };
-
-        template <>
-        struct raw_destructor<b2Contact> {
-            static void my_destructor(b2Contact*) {}
-            static constexpr auto value = &my_destructor;
-        };
+        template <> inline void raw_destructor<b2Body>(b2Body*) {}
+        template <> inline void raw_destructor<b2Fixture>(b2Fixture*) {}
+        template <> inline void raw_destructor<b2Joint>(b2Joint*) {}
+        template <> inline void raw_destructor<b2RevoluteJoint>(b2RevoluteJoint*) {}
+        template <> inline void raw_destructor<b2DistanceJoint>(b2DistanceJoint*) {}
+        template <> inline void raw_destructor<b2PrismaticJoint>(b2PrismaticJoint*) {}
+        template <> inline void raw_destructor<b2MouseJoint>(b2MouseJoint*) {}
+        template <> inline void raw_destructor<b2WeldJoint>(b2WeldJoint*) {}
+        template <> inline void raw_destructor<b2WheelJoint>(b2WheelJoint*) {}
+        template <> inline void raw_destructor<b2MotorJoint>(b2MotorJoint*) {}
+        template <> inline void raw_destructor<b2FrictionJoint>(b2FrictionJoint*) {}
+        template <> inline void raw_destructor<b2Contact>(b2Contact*) {}
     }
 }
 
