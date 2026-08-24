@@ -105,6 +105,30 @@ target_include_directories(box2d
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+if (EMSCRIPTEN)
+  add_executable(box2d_js ${BOX2D_SOURCE_FILES})
+  target_include_directories(box2d_js
+    PUBLIC
+      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+      $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+  set_target_properties(box2d_js PROPERTIES
+    OUTPUT_NAME "box2d"
+    SUFFIX ".js"
+  )
+  if (NOT BOX2D_BUILD_WASM)
+    set_target_properties(box2d_js PROPERTIES
+      LINK_FLAGS "-s WASM=0 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORT_NAME='Box2D' -s LEGACY_VM_SUPPORT=1"
+    )
+  else()
+    set_target_properties(box2d_js PROPERTIES
+      LINK_FLAGS "-s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORT_NAME='Box2D'"
+    )
+  endif()
+endif()
+
 set_target_properties(box2d PROPERTIES
 	CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
